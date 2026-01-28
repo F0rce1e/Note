@@ -53,6 +53,7 @@ const createWindow = () => {
     height: 400,
     minWidth: 200,
     minHeight: 200,
+    resizable: true,
     frame: false, // Frameless for custom UI
     transparent: true, // Transparent background
     alwaysOnTop: false,
@@ -116,4 +117,21 @@ ipcMain.handle('set-always-on-top', (event, flag) => {
   if (mainWindow) {
     mainWindow.setAlwaysOnTop(!!flag);
   }
+});
+ipcMain.handle('get-window-bounds', () => {
+  if (!mainWindow) {
+    return null;
+  }
+  return mainWindow.getBounds();
+});
+ipcMain.handle('resize-window', (event, bounds) => {
+  if (!mainWindow || !bounds) {
+    return;
+  }
+  const current = mainWindow.getBounds();
+  const nextBounds = {
+    ...current,
+    ...bounds,
+  };
+  mainWindow.setBounds(nextBounds);
 });
